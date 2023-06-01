@@ -89,7 +89,7 @@ step "create-db-schema" {
         action_type = "Octopus.Script"
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7-gha"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "Scripts\\UpdateAzureSql.ps1"
@@ -99,7 +99,7 @@ step "create-db-schema" {
 
         packages {
             acquisition_location = "Server"
-            feed = "onion-arch-dotnet-7"
+            feed = "onion-arch-dotnet-7-gha"
             package_id = "ChurchBulletin.Database"
             properties = {
                 SelectionMode = "immediate"
