@@ -74,6 +74,7 @@ jobs:
 
 
   TDD:
+    needs: dockerbuildandpush
     runs-on: 'windows-latest'
     environment:
       name: TDD
