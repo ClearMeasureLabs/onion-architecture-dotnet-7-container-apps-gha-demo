@@ -161,7 +161,7 @@ variable "uniquedbname" {
 }
 
 variable "DatabaseServerName" {
-    value "databaseserverwto4pqsxk5uio" {
+    value "randomstring" {
         environment = ["tdd"]
     }
 }
