@@ -167,3 +167,17 @@ variable "libraryset" {
 variable "octoURL" {
     value "https://clearmeasure.octopus.app/" {}
 }
+
+variable "DatabaseServerName" {
+    value "#{az_login_appid}-sqlserver-prod" {
+        environment = ["prod"]
+    }
+
+    value "#{az_login_appid}-sqlserver-tdd-#{Octopus.Release.Number}" {
+        environment = ["tdd"]
+    }
+
+    value "#{az_login_appid}-sqlserver-uat" {
+        environment = ["uat"]
+    }
+}
