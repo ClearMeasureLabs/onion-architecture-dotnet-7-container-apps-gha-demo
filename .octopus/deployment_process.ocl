@@ -79,7 +79,7 @@ step "deploy-an-azure-resource-manager-template" {
 }
 
 step "run-a-script" {
-    name = "Run a Script"
+    name = "Retrieve db name"
 
     action {
         action_type = "Octopus.Script"
