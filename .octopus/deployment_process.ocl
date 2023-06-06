@@ -100,7 +100,7 @@ step "run-a-script" {
                     $varName = "DatabaseServerName",                            # Replace with the name of the variable
                     $varValue = $uniquedbname,                           # Replace with the value of the variable
                     $gitRefOrBranchName = $OctopusParameters["Octopus.Release.Git.BranchName"],              # Set this value if you are storing a plain-text variable and the project is version controlled. If no value is set, the default branch will be used.
-                	$libraryVariableSetName  = "Onion DevOps
+                	$libraryVariableSetName  = "Onion DevOps"
                 )
                 
                 # Defines header for API call
