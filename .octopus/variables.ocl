@@ -158,6 +158,10 @@ variable "ResourceGroupName" {
 
 variable "DatabaseServerName" {
     value "" {}
+
+    value "databaseserverkt2bag4uauau4" {
+        environment = ["tdd"]
+    }
 }
 
 variable "uniquedbname" {
