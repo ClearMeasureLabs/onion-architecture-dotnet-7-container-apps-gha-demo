@@ -153,6 +153,8 @@ jobs:
   UAT:
     needs: TDD
     runs-on: 'windows-latest'
+    environment:
+      name: UAT
     steps:
 
     - name: Deploy-to-UAT
@@ -182,6 +184,8 @@ jobs:
   Prod:
     needs: UAT
     runs-on: 'windows-latest'
+    environment:
+      name: Prod    
     steps:
 
     - name: Deploy-to-Prod
