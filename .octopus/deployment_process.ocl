@@ -80,7 +80,7 @@ step "deploy-an-azure-resource-manager-template" {
 
 step "run-a-script" {
     condition = "Variable"
-    name = "Retrieve db name"
+    name = "Retrieve database server name"
     properties = {
         Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
     }
@@ -97,8 +97,8 @@ step "run-a-script" {
                     $projectName = $OctopusParameters["Octopus.Project.Name"],                        # Replace with your project name
                     $spaceName = "Onion DevOps",                   # Replace with the name of the space you are working in
                     $environment = $OctopusParameters["Octopus.Environment.Name"],                     # Replace with the name of the environment you want to scope the variables to
-                    $varName = "uniquedbname",                            # Replace with the name of the variable
-                    $varValue = $DatabaseServerName,                           # Replace with the value of the variable
+                    $varName = "DatabaseServerName",                            # Replace with the name of the variable
+                    $varValue = $uniquedbname,                           # Replace with the value of the variable
                     $gitRefOrBranchName = $OctopusParameters["Octopus.Release.Git.BranchName"]              # Set this value if you are storing a plain-text variable and the project is version controlled. If no value is set, the default branch will be used.
                 )
                 
