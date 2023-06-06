@@ -160,12 +160,6 @@ variable "uniquedbname" {
     value "#{Octopus.Action[Create AZ DB].Output.AzureRMOutputs[databaseserverName]}" {}
 }
 
-variable "DatabaseServerName" {
-    value "databaseserverbmxotxxkyl5ze" {
-        environment = ["tdd"]
-    }
-}
-
 variable "libraryset" {
     value "Onion DevOps" {}
 }
