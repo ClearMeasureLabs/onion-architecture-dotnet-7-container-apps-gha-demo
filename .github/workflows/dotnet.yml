@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  BUILD_BUILDNUMBER: 15
+  BUILD_BUILDNUMBER: 1.0.15
   OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
   TDD_RESOURCE_GROUP: onion-architecture-dotnet-7-containers-TDD
