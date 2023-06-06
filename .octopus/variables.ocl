@@ -165,3 +165,11 @@ variable "DatabaseServerName" {
         environment = ["tdd"]
     }
 }
+
+variable "libraryset" {
+    value "Onion DevOps" {}
+}
+
+variable "octoURL" {
+    value "https://clearmeasure.octopus.app/" {}
+}
