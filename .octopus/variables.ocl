@@ -156,14 +156,6 @@ variable "ResourceGroupName" {
     }
 }
 
-variable "DatabaseServerName" {
-    value "" {}
-
-    value "databaseserverkt2bag4uauau4" {
-        environment = ["tdd"]
-    }
-}
-
 variable "uniquedbname" {
     value "#{Octopus.Action[Create AZ DB].Output.AzureRMOutputs[databaseserverName]}" {}
 }
