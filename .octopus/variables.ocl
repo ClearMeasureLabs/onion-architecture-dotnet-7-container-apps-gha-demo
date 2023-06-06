@@ -53,7 +53,7 @@ variable "EnsureEnvironmentsExist" {
         environment = ["tdd"]
     }
 
-    value "False" {
+    value "True" {
         description = ""
         environment = ["prod", "uat"]
     }
@@ -162,4 +162,8 @@ variable "DatabaseServerName" {
 
 variable "uniquedbname" {
     value {}
+
+    value "databaseserverauh6iazit7mmy" {
+        environment = ["tdd"]
+    }
 }
