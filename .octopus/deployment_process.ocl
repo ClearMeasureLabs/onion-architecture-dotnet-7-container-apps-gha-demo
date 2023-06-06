@@ -92,15 +92,15 @@ step "run-a-script" {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 
                 param(
-                    $octopusURL = "https://clearmeasure.octopus.app/", # Octopus Server URL
+                    $octopusURL = $octoURL, # Octopus Server URL
                     $octopusAPIKey = $APIKey,               # API key goes here
                     $projectName = $OctopusParameters["Octopus.Project.Name"],                        # Replace with your project name
-                    $spaceName = "Onion DevOps",                   # Replace with the name of the space you are working in
+                    $spaceName = $OctopusParameters["Octopus.Space.Name"],                   # Replace with the name of the space you are working in
                     $environment = $OctopusParameters["Octopus.Environment.Name"],                     # Replace with the name of the environment you want to scope the variables to
                     $varName = "DatabaseServerName",                            # Replace with the name of the variable
                     $varValue = $uniquedbname,                           # Replace with the value of the variable
                     $gitRefOrBranchName = $OctopusParameters["Octopus.Release.Git.BranchName"],              # Set this value if you are storing a plain-text variable and the project is version controlled. If no value is set, the default branch will be used.
-                	$libraryVariableSetName  = "Onion DevOps"
+                	$libraryVariableSetName  = $libraryset
                 )
                 
                 # Defines header for API call
