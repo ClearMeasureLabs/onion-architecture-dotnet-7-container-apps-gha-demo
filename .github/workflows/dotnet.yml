@@ -14,67 +14,66 @@ env:
   TDD_APP_NAME: tdd-ui
 
 jobs:
-  build:
+  # build:
 
-    runs-on: windows-latest
+  #   runs-on: windows-latest
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET 7
-      uses: actions/setup-dotnet@v3.0.3
-      with:
-        dotnet-version: 7.0.x
-    - name: Setup .NET 6
-      uses: actions/setup-dotnet@v3.0.3
-      with:
-        dotnet-version: 6.0.x
-    - name: Build Script
-      run: |
-        [System.Environment]::SetEnvironmentVariable('Version','${{ github.run_number }}')
-        . .\build.ps1 ; CIBuild
-
-
-    - name: Push NuGet packages   
-      run: |
-        foreach($file in (Get-ChildItem ".\build\" -Recurse -Include *.nupkg)) {
-          dotnet nuget push $file --source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json" --api-key ${{ secrets.PACKAGESAPI }}
-        }  
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Setup .NET 7
+  #     uses: actions/setup-dotnet@v3.0.3
+  #     with:
+  #       dotnet-version: 7.0.x
+  #   - name: Setup .NET 6
+  #     uses: actions/setup-dotnet@v3.0.3
+  #     with:
+  #       dotnet-version: 6.0.x
+  #   - name: Build Script
+  #     run: |
+  #       [System.Environment]::SetEnvironmentVariable('Version','${{ github.run_number }}')
+  #       . .\build.ps1 ; CIBuild
 
 
-  dockerbuildandpush:
-    needs: build
+  #   - name: Push NuGet packages   
+  #     run: |
+  #       foreach($file in (Get-ChildItem ".\build\" -Recurse -Include *.nupkg)) {
+  #         dotnet nuget push $file --source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json" --api-key ${{ secrets.PACKAGESAPI }}
+  #       }  
 
-    runs-on: 'ubuntu-latest'
 
-    steps:
+  # dockerbuildandpush:
+  #   needs: build
 
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@main
+  #   runs-on: 'ubuntu-latest'
 
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #   steps:
 
-    - name: Download UI Package
-      run: |
-        nuget sources Add -Name github -Source https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json -UserName ${{ vars.USERNAME }} -Password ${{ secrets.PACKAGESAPI }}
-        nuget install ChurchBulletin.UI -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
-        mv ChurchBulletin.UI.${{ github.run_number }} built
+  #   - name: 'Checkout GitHub Action'
+  #     uses: actions/checkout@main
 
-    - name: 'Build and push image'
-      uses: azure/docker-login@v1
-      with:
-        login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-    - run: |
-        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
-        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
+  #   - name: 'Login via Azure CLI'
+  #     uses: azure/login@v1
+  #     with:
+  #       creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+  #   - name: Download UI Package
+  #     run: |
+  #       nuget sources Add -Name github -Source https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json -UserName ${{ vars.USERNAME }} -Password ${{ secrets.PACKAGESAPI }}
+  #       nuget install ChurchBulletin.UI -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
+  #       mv ChurchBulletin.UI.${{ github.run_number }} built
+
+  #   - name: 'Build and push image'
+  #     uses: azure/docker-login@v1
+  #     with:
+  #       login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+  #       username: ${{ secrets.REGISTRY_USERNAME }}
+  #       password: ${{ secrets.REGISTRY_PASSWORD }}
+  #   - run: |
+  #       docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
+  #       docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
 
 
   TDD:
-    needs: dockerbuildandpush
     runs-on: 'windows-latest'
     environment:
       name: TDD
