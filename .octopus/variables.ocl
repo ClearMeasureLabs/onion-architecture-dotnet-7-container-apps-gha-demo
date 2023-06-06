@@ -159,3 +159,7 @@ variable "ResourceGroupName" {
 variable "DatabaseServerName" {
     value "#{Octopus.Action[Create AZ DB].Output.AzureRMOutputs[databaseserverName]}" {}
 }
+
+variable "uniquedbname" {
+    value {}
+}
