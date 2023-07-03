@@ -173,7 +173,7 @@ variable "DatabaseServerName" {
         environment = ["uat"]
     }
 
-    value "#{az_login_appid}-tdd-#{Octopus.Release.Id}" {
+    value "#{az_login_appid}-tdd-#{Octopus.Release.Id | ToLower }" {
         environment = ["tdd"]
     }
 }
