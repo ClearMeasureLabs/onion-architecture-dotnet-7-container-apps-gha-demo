@@ -4,7 +4,7 @@ param(
 )
 
 #Wait for revision to update before checking version number
-Start-Sleep -Seconds 30
+Start-Sleep -Seconds 90
 $uri = "$server/version"
 Write-Host "Getting version $uri"
 Invoke-WebRequest $uri -UseBasicParsing | Foreach {
