@@ -8,7 +8,7 @@ step "update-ensureenvironmentsexist" {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 
                 param(
-                    $octopusURL = $OctopusParameters["Octopus.Web.BaseUrl"], 								# Octopus Server URL
+                    $octopusURL = "https://clearmeasure.octopus.app/" 								# Octopus Server URL
                     $octopusAPIKey = $octoAPIKey,               									# API key goes here
                     $projectName = $OctopusParameters["Octopus.Project.Name"],                  	# Replace with your project name
                     $spaceName = $OctopusParameters["Octopus.Space.Name"],                   		# Replace with the name of the space you are working in
