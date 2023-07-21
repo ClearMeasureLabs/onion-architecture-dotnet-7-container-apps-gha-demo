@@ -14,7 +14,7 @@ step "update-ensureenvironmentsexist" {
                     $environment = $OctopusParameters["Octopus.Environment.Name"],                     # Replace with the name of the environment you want to scope the variables to
                     $varName = "EnsureEnvironmentsExist",                            # Replace with the name of the variable
                     $varValue = "True",                           # Replace with the value of the variable
-                    $gitRefOrBranchName = $OctopusParameters["Octopus.Release.Git.BranchName"],               # Set this value if you are storing a plain-text variable and the project is version controlled. If no value is set, the default branch will be used.
+                    $gitRefOrBranchName = $OctopusParameters["Octopus.Release.Git.BranchName"]               # Set this value if you are storing a plain-text variable and the project is version controlled. If no value is set, the default branch will be used.
                 )
                 
                 # Defines header for API call
