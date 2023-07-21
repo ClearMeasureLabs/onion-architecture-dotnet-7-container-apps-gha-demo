@@ -19,7 +19,7 @@ step "update-ensureenvironmentsexist" {
                 )
                 # Defines header for API call
                 $header = @{ "X-Octopus-ApiKey" = $octopusAPIKey }
-                
+                Write-Host $OctopusParameters["Octopus.Web.BaseUrl"]
                 # Get space
                 $space = (Invoke-RestMethod -Method Get -Uri "$octopusURL/api/spaces/all" -Headers $header) | Where-Object {$_.Name -eq $spaceName}
                 
