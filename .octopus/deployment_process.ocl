@@ -3,7 +3,6 @@ step "update-ensureenvironmentsexist" {
 
     action {
         action_type = "Octopus.Script"
-        excluded_environments = ["tdd"]
         properties = {
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = <<-EOT
