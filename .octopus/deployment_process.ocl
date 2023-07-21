@@ -12,8 +12,8 @@ step "update-ensureenvironmentsexist" {
                     param(
                         $octopusURL = "https://clearmeasure.octopus.app/", 								# Octopus Server URL
                         $octopusAPIKey = $octoAPIKey,               									# API key goes here
-                        $projectName = $OctopusParameters["Octopus.Project.Name"],                  	# Replace with your project name
-                        $spaceName = $OctopusParameters["Octopus.Space.Name"],                   		# Replace with the name of the space you are working in
+                        $projectName = "github-actions-dotnet-7-container-apps",                  	# Replace with your project name
+                        $spaceName = "Onion DevOps",                   		# Replace with the name of the space you are working in
                         $environment = $OctopusParameters["Octopus.Environment.Name"],                  # Replace with the name of the environment you want to scope the variables to
                         $varName = "EnsureEnvironmentsExist",                            				# Replace with the name of the variable
                         $varValue = "True",                          					 				# Replace with the value of the variable
