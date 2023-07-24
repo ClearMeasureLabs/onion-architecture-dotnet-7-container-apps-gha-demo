@@ -54,11 +54,11 @@ variable "EnsureEnvironmentsExist" {
     }
 
     value "False" {
-        environment = ["prod"]
+        environment = ["uat"]
     }
 
     value "False" {
-        environment = ["uat"]
+        environment = ["prod"]
     }
 }
 
