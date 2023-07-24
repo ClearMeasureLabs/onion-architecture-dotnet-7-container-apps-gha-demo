@@ -547,7 +547,7 @@ step "update-ensureenvironmentsexist" {
     condition = "Variable"
     name = "Set EnsureEnvironmentsExist to False"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist != \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
     }
 
     action {
