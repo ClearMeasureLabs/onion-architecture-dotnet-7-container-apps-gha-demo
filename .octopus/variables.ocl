@@ -168,11 +168,11 @@ variable "DatabaseServerName" {
 }
 
 variable "EnsureEnvironmentsExist" {
-    value "True" {
-        environment = ["prod"]
+    value "False" {
+        environment = ["uat"]
     }
 
     value "False" {
-        environment = ["uat"]
+        environment = ["prod"]
     }
 }
