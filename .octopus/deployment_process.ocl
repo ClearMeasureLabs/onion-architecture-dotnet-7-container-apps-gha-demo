@@ -2,7 +2,7 @@ step "create-resource-group" {
     condition = "Variable"
     name = "Create Resource Group"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == TDD}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == TDD}true#{/if}"
     }
 
     action {
