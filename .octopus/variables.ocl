@@ -172,7 +172,7 @@ variable "EnsureEnvironmentsExist" {
         environment = ["prod"]
     }
 
-    value "True" {
+    value "False" {
         environment = ["uat"]
     }
 }
