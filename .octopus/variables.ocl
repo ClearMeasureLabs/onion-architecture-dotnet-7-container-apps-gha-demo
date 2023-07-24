@@ -50,11 +50,11 @@ variable "connection_string" {
 
 variable "EnsureEnvironmentsExist" {
     value "False" {
-        environment = ["uat"]
+        environment = ["prod"]
     }
 
     value "False" {
-        environment = ["prod"]
+        environment = ["uat"]
     }
 }
 
