@@ -175,7 +175,7 @@ jobs:
         project: ${{ vars.OCTOPUS_PROJECT }}   
         deploy_to: "UAT"   
         progress: true 
-        release_number: ${{env.BUILD_BUILDNUMBER}}
+        release_number: "1.0.145"
         timeout: 00:30:00
 
 
@@ -201,5 +201,5 @@ jobs:
         project: ${{ vars.OCTOPUS_PROJECT }}   
         deploy_to: "Prod"   
         progress: true 
-        release_number: ${{env.BUILD_BUILDNUMBER}}
+        release_number: "1.0.145"
         timeout: 00:30:00
