@@ -167,7 +167,7 @@ jobs:
 
     - name: Deploy-to-UAT
       id: deploy-to-uat
-      uses: dmarttinen/create-release-action@1.0
+      uses: dmarttinen/create-release-action@0.2
       with:
         api_key: ${{ secrets.OCTO_API_KEY  }}
         server: ${{ secrets.OCTOPUS_URL }}
