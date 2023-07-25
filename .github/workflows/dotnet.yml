@@ -172,9 +172,7 @@ jobs:
         api_key: ${{ secrets.OCTO_API_KEY  }}
         server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ vars.OCTOPUS_SPACE }}       
-        project: ${{ vars.OCTOPUS_PROJECT }}  
-        git_ref: ${{ (github.ref_type == 'tag' && github.event.repository.default_branch ) || (github.head_ref || github.ref) }}
-        git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}  
+        project: ${{ vars.OCTOPUS_PROJECT }}   
         deploy_to: "UAT"   
         progress: true 
         release_number: "1.0.140"
