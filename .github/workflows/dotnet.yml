@@ -162,26 +162,26 @@ jobs:
 
     - name: Deploy-to-UAT
       id: deploy-to-uat
-      uses: OctopusDeploy/deploy-release-action@v3
-      env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
-        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      uses: dmarttinen/create-release-action@1.0
       with:
-        project: ${{ vars.OCTOPUS_PROJECT }}
-        release_number: ${{ env.BUILD_BUILDNUMBER }}
-        environments: |
-          UAT
+        api_key: ${{ secrets.OCTO_API_KEY  }}
+        server: ${{ secrets.OCTOPUS_URL }}
+        space: ${{ vars.OCTOPUS_SPACE }}       
+        project: ${{ vars.OCTOPUS_PROJECT }}   
+        deploy_to: "UAT"   
+        progress: true 
+        release_number: ${{ github.run_number }}
+        timeout: 00:30:00
 
-    - name: Wait-for-UAT
-      uses: OctopusDeploy/await-task-action@v3
-      env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
-        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
-      with:
-        server_task_id: ${{ fromJson(steps.deploy-to-uat.outputs.server_tasks)[0].serverTaskId }}
-        timeout_after: 1800
+    # - name: Wait-for-UAT
+    #   uses: OctopusDeploy/await-task-action@v3
+    #   env:
+    #     OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+    #     OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+    #     OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+    #   with:
+    #     server_task_id: ${{ fromJson(steps.deploy-to-uat.outputs.server_tasks)[0].serverTaskId }}
+    #     timeout_after: 1800
 
 
   Prod:
