@@ -91,7 +91,7 @@ step "flyway-database-migrations" {
             Flyway.Command.Value = "migrate"
             Flyway.Database.User = "#{DatabaseUser}"
             Flyway.Database.User.Password = "#{DatabasePassword}"
-            Flyway.Executable.Path = "\\scripts\\flyway\\.flyway.cmd"
+            Flyway.Executable.Path = "\\scripts\\flyway\\flyway.cmd"
             Flyway.Package.Value = "{\"PackageId\":\"ChurchBulletin.Database\",\"FeedId\":\"onion-arch-dotnet-7-gha\"}"
             Flyway.Target.Url = "jdbc:sqlserver://#{DatabaseServerName}:1433;databaseName=#{DatabaseName}"
             Octopus.Action.RunOnServer = "true"
