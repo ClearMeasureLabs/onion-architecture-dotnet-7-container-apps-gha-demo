@@ -78,6 +78,38 @@ step "deploy-an-azure-resource-manager-template" {
     }
 }
 
+step "install-java" {
+    name = "Install Java"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                # Set the source and destination for the Java installer
+                $source = "https://download.oracle.com/otn-pub/java/jdk/8u5-b13/jdk-8u5-windows-i586.exe"
+                $destination = "C:\Download\Java\jdk-7u60-windows-i586.exe"
+                
+                # Create a new WebClient object
+                $client = new-object System.Net.WebClient
+                
+                # Set the cookie to accept the Oracle license
+                $cookie = "oraclelicense=accept-securebackup-cookie"
+                $client.Headers.Add([System.Net.HttpRequestHeader]::Cookie, $cookie)
+                
+                # Download the Java installer
+                $client.downloadFile($source, $destination)
+                
+                # Run the Java installer silently
+                Start-Process -FilePath $destination -ArgumentList "/s" -Wait
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+        }
+        worker_pool = "hosted-windows"
+    }
+}
+
 step "create-db-schema" {
     condition = "Variable"
     name = "Create DB Schema"
