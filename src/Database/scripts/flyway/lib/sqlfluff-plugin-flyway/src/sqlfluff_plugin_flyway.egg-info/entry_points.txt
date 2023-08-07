@@ -1,2 +1,0 @@
-[sqlfluff]
-flyway = flyway.rules
