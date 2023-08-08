@@ -78,13 +78,52 @@ step "deploy-an-azure-resource-manager-template" {
     }
 }
 
+step "flyway-baseline" {
+    name = "Flyway Baseline"
+
+    action {
+        properties = {
+            Flyway.Authentication.Method = "usernamepassword"
+            Flyway.Command.OutOfOrder = "false"
+            Flyway.Command.SkipExecutingMigrations = "false"
+            Flyway.Command.Target = "latest"
+            Flyway.Command.Value = "baseline"
+            Flyway.Database.User = "#{DatabaseUser}"
+            Flyway.Database.User.Password = "#{DatabasePassword}"
+            Flyway.Package.Value = "{\"PackageId\":\"ChurchBulletin.Database\",\"FeedId\":\"onion-arch-dotnet-7-gha\"}"
+            Flyway.Target.Url = "jdbc:sqlserver://#{DatabaseServer}:1433;databaseName=#{DatabaseName}"
+            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.Template.Id = "ActionTemplates-321"
+            Octopus.Action.Template.Version = "10"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool = "hosted-windows"
+
+        container {
+            feed = "docker-hub"
+            image = "octopuslabs/flyway-workertools:latest"
+        }
+
+        packages "Flyway.Package.Value" {
+            acquisition_location = "Server"
+            feed = "onion-arch-dotnet-7-gha"
+            package_id = "ChurchBulletin.Database"
+            properties = {
+                Extract = "True"
+                PackageParameterName = "Flyway.Package.Value"
+                SelectionMode = "deferred"
+            }
+        }
+    }
+}
+
 step "flyway-database-migrations" {
     name = "Flyway Database Migrations"
 
     action {
         properties = {
             Flyway.Authentication.Method = "usernamepassword"
-            Flyway.Command.Locations = "\\scripts\\Update"
+            Flyway.Command.Locations = "filesystem:#{Octopus.Action.Package[Flyway.Package.Value].ExtractedPath}/scripts/Update"
             Flyway.Command.OutOfOrder = "false"
             Flyway.Command.SkipExecutingMigrations = "false"
             Flyway.Command.Target = "latest"
