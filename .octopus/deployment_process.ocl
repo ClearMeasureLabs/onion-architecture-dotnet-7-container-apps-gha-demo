@@ -84,7 +84,7 @@ step "flyway-database-migrations" {
     action {
         properties = {
             Flyway.Authentication.Method = "usernamepassword"
-            Flyway.Command.Locations = "\\scripts\\Update"
+            Flyway.Command.Locations = "filesystem:{Octopus.Action.Package[Flyway.Package.Value].ExtractedPath}/scripts/update"
             Flyway.Command.OutOfOrder = "false"
             Flyway.Command.SkipExecutingMigrations = "false"
             Flyway.Command.Target = "latest"
