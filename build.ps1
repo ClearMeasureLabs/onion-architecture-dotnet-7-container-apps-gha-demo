@@ -135,7 +135,7 @@ Function MigrateDatabaseLocal {
 		
 		# Set the username and password for the new user
 		$username = "flyway"
-		$password = "i6GsjTF#S&5!hAVb^d"
+		$password = "qdnGVXxyjrEYWhSV3h"
 		$command = $connection.CreateCommand()
 		$command.CommandText = @"
 		CREATE LOGIN [$username] WITH PASSWORD = '$password';
