@@ -111,7 +111,20 @@ Function AcceptanceTest{
 Function MigrateDatabaseLocal {
 	exec{
 		# & $aliaSql $databaseAction $script:databaseServer $databaseName $databaseScripts
-		
+	
+		#start mssqllocaldb and create the database
+		sqllocaldb start mssqllocaldb
+		$connectionString = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True"
+		$databaseName = $projectName
+		$connection = New-Object System.Data.SqlClient.SqlConnection
+		$connection.ConnectionString = $connectionString
+		$connection.Open()
+		$command = New-Object System.Data.SqlClient.SqlCommand
+		$command.Connection = $connection
+		$command.CommandText = "CREATE DATABASE [$databaseName]"
+		$command.ExecuteNonQuery()
+		$connection.Close()
+
 		#flyway can't connect to mssqllocaldb using windows auth. Create a new user for flyway
 		# Set the connection string
 		$connectionString = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=$projectName;Integrated Security=True"
