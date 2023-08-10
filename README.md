@@ -389,7 +389,7 @@ Push a commit to trigger Github Actions to run the pipeline.
 
 # Octopus Deploy Runbook Setup:
 
-In the ChurchBulletin.Scripts package that is created there is a script called ScaleContainerApp.ps1. When provided with an appReplicas value the script will set the min and max number of replicas of the container app to that value. This is used with Octopus Runbooks ([Runbooks](https://octopus.com/docs/runbooks#:~:text=To%20create%20or%20manage%20your,%E2%9E%9C%20Runbooks%20%E2%9E%9C%20Add%20Runbook.)) to scale up the instances of the container app for day and nighttime loads.
+In the ChurchBulletin.Scripts package that is created there is a script called ScaleContainerApp.ps1. When provided with an appReplicas value the script will set the min and max number of replicas of the container app to that value. This is used with Octopus Runbooks ([Runbooks Documentation](https://octopus.com/docs/runbooks#:~:text=To%20create%20or%20manage%20your,%E2%9E%9C%20Runbooks%20%E2%9E%9C%20Add%20Runbook.)) to scale up the instances of the container app for day and nighttime loads.
 
 ## Create ContainerAppReplicas variable
 
@@ -400,35 +400,35 @@ Commit this variable to main. **Variables not in the default branch will not be 
 
 ## Create Scale Up Runbook
 
--In your Octopus Deploy project, navigate to Operations -> Runbooks and select ADD RUNBOOK
--Name the runbook Scale Up Container App
--Select Save
+- In your Octopus Deploy project, navigate to Operations -> Runbooks and select ADD RUNBOOK
+- Name the runbook Scale Up Container App
+- Select Save
 ![Alt text](images/runbook1.png)
 
--Select DEFINE YOUR RUNBOOK PROCESS near the upper right
+- Select DEFINE YOUR RUNBOOK PROCESS near the upper right
 
 ![Alt text](images/runbook2.png)
 
--And then select ADD STEP
+- And then select ADD STEP
 
--Use the run az Azure Script step template
+- Use the run az Azure Script step template
 
 ![Alt text](images/runbook3.png)
 
--Select ADD
+- Select ADD
 
--Name the step **Scale Up Container App**
--Leave Execution Location, Worker Pool, Container Image, and Azure Tools as default
+- Name the step **Scale Up Container App**
+- Leave Execution Location, Worker Pool, Container Image, and Azure Tools as default
 
--Under Azure -> Account select the chain links icon to bind the account value to a variable. Then set the value to **#{AzureAccount}** 
+- Under Azure -> Account select the chain links icon to bind the account value to a variable. Then set the value to **#{AzureAccount}** 
 
 ![Alt text](images/runbook4.png)
 
--Under Script Source select **Script file inside a package** 
--Under Script File in Package set the Package feed to the feed that was created.
--Set the Package ID to **ChurchBulletin.Script**
--Set the Script file name to **ScaleContainerApp.ps1**
--Set the Script parameters to **-appReplicas #{ContainerAppReplicas}**
+- Under Script Source select **Script file inside a package** 
+- Under Script File in Package set the Package feed to the feed that was created.
+- Set the Package ID to **ChurchBulletin.Script**
+- Set the Script file name to **ScaleContainerApp.ps1**
+- Set the Script parameters to **-appReplicas #{ContainerAppReplicas}**
 
 ![Alt text](images/runbook5.png)
 
@@ -438,42 +438,43 @@ Leave the rest of the settings at default, and select SAVE
 
 Create another runbook named Scale Down Container App using the same directions.
 
--Change the Step Name to **Scale Down Container App**
--Set the Script parameters to **-appReplicas 1**
+- Change the Step Name to **Scale Down Container App**
+- Set the Script parameters to **-appReplicas 1**
 
 ## Publish the runbooks
 
 Runbooks must be published before they can be consumed by triggers.
--Navigate to the Scale Up Container App runbook. Select PUBLISH.
--Leave the default settings, and select PUBLISH
--Do the same for Scale Down Container App
 
+- Navigate to the Scale Up Container App runbook. Select PUBLISH
 ![Alt text](images/runbook7.png)
+- Leave the default settings, and select PUBLISH
 ![Alt text](images/runbook8.png)
+- Do the same for Scale Down Container App
 
 ## Create Scheduled Runbook Triggers
-([Runbook Triggers](https://octopus.com/docs/runbooks/scheduled-runbook-trigger))
--Navigate to Operations -> Triggers
--Select ADD SCHEDULED TRIGGER
--Name the trigger Scale Up Morning
--Under Runbook select Scale Up Container App
--Under Target Environments select Prod
--Leave the schedule at Daily
--Under Run Days uncheck Saturday and Sunday
--Set Schedule Timezone to your timezone
--Leave the Interval at once
--Set the Start Time to 8:00 AM
--Click Save
+([Runbook Triggers Documentation](https://octopus.com/docs/runbooks/scheduled-runbook-trigger))
+
+- Navigate to Operations -> Triggers
+- Select ADD SCHEDULED TRIGGER
+- Name the trigger Scale Up Morning
+- Under Runbook select Scale Up Container App
+- Under Target Environments select Prod
+- Leave the schedule at Daily
+- Under Run Days uncheck Saturday and Sunday
+- Set Schedule Timezone to your timezone
+- Leave the Interval at once
+- Set the Start Time to 8:00 AM
+- Click Save
 
 ![Alt text](images/trigger1.png)
 
--Create another trigger named Scale Down Evening
--Use the Scale Down Container App runbook
--Under Target Environments select Prod
--Under Run Days uncheck Saturday and Sunday
--Set Schedule Timezone to your timezone
--Set the Start Time to 6:00 PM
--Click Save
+- Create another trigger named Scale Down Evening
+- Use the Scale Down Container App runbook
+- Under Target Environments select Prod
+- Under Run Days uncheck Saturday and Sunday
+- Set Schedule Timezone to your timezone
+- Set the Start Time to 6:00 PM
+- Click Save
 
 Now the container app will automatically be scaled up two multiple instances every morning, and scaled down to a single instance every
 
