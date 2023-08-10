@@ -43,6 +43,5 @@ Write-Host $env:PATH -Split ';'
 ###################################################################
 #All of that to get to this.  This the actual containerapp
 #update - set the number of replicas.
-& az containerapp update --name $container_app_name --resource-group $ResourceGroupName --image $container_image
 & az containerapp update --name $container_app_name --resource-group $ResourceGroupName --min-replicas $appReplicas --max-replicas $appReplicas
 ###################################################################
