@@ -1,5 +1,5 @@
 param(
-    [int]$appRecplicas = 1
+    [int]$appReplicas = 1
 )
 
 #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
