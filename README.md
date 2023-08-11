@@ -431,7 +431,7 @@ Commit these variables to main. **Variables not in the default branch will not b
 - Under Script File in Package set the Package feed to the feed that was created.
 - Set the Package ID to **ChurchBulletin.Script**
 - Set the Script file name to **ScaleInfrastructure.ps1**
-- Set the Script parameters to **-appReplicas #{ContainerAppReplicas} -$serviceObjective #{DBScaledUpPerformanceLevel}**
+- Set the Script parameters to **-appReplicas #{ContainerAppReplicas} -serviceObjective #{DBScaledUpPerformanceLevel}**
 
 ![Alt text](images/runbook5.png)
 
