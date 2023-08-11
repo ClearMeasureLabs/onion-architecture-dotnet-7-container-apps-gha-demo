@@ -539,7 +539,7 @@ step "healthcheck" {
 }
 
 step "replicate-az-db" {
-    name = "Replicate az db"
+    name = "Scale Up AZ DB"
 
     action {
         action_type = "Octopus.AzurePowerShell"
@@ -583,7 +583,7 @@ step "replicate-az-db" {
                 & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
                 
                 ###################################################################
-                az sql db replica create --resource-group $ResourceGroupName --server $DatabaseServerName --name $DatabaseName --partner-server $DatabaseServerName --service-objective Basic
+                az sql db update --resource-group $ResourceGroupName --server $DatabaseServerName --name $DatabaseName --service-objective S0
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
