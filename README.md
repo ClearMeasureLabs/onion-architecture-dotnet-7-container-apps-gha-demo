@@ -29,6 +29,21 @@ This project will create all of the required infrastructure in Azure programatic
     - [Create the following secrets:](#create-the-following-secrets)
     - [Create the following variables:](#create-the-following-variables)
   - [Connect Octopus to the Github Packages feed:](#connect-octopus-to-the-github-packages-feed)
+- [TeamCity](#teamcity)
+  - [Create a New Project](#create-a-new-project)
+  - [Enable UI Updates](#enable-ui-updates)
+  - [Create an Azure Service Principal](#create-an-azure-service-principal-1)
+  - [Update Project Parameters](#update-project-parameters)
+  - [Connect TeamCity to ACR](#connect-teamcity-to-acr)
+  - [Create a TeamCity Nuget Feed](#create-a-teamcity-nuget-feed)
+  - [Connect Octopus to the TeamCity feed](#connect-octopus-to-the-teamcity-feed)
+    - [In Octopus Deploy](#in-octopus-deploy-1)
+- [Octopus Deploy Runbook Setup:](#octopus-deploy-runbook-setup)
+  - [Create ContainerAppReplicas variable](#create-containerappreplicas-variable)
+  - [Create Scale Up Runbook](#create-scale-up-runbook)
+  - [Create Scale Down Runbook](#create-scale-down-runbook)
+  - [Publish the runbooks](#publish-the-runbooks)
+  - [Create Scheduled Runbook Triggers](#create-scheduled-runbook-triggers)
 
 
 Requirements:
@@ -125,6 +140,13 @@ No Deployment targets need to be created.
 
 Create a Lifecycle that uses those three environments promoting from TDD -\> UAT -\> Prod
 
+# Octopus Deploy Library Set Setup:
+
+In Octopus Deploy navigate to Library -\> Variable Sets
+
+Create a new variable set named Onion DevOps
+Create a variable named DatabaseServerName. Leave the value blank.
+
 # Octopus Deploy Project Setup:
 
 ## Connect Octopus to GitHub
@@ -163,9 +185,6 @@ In the Octopus Project navigate to Variables -\> Project
 - Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
   - This loging server can be found in the Overview page of the container registry in the Azure Web Portal
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
-
-Optional:
-- Update **ResourceGroupName** and/or **container_app_name** to names that match your naming convention. If the TDD values are changed, the TDDResourceGroup and/or TDDAppName variables in Azure DevOps, or the **TDD_RESOURCE_GROUP** and/or **TDD_APP_NAME** variables in Github Actions must be changed to match.
 
 # Azure DevOps Setup:
 
@@ -301,6 +320,16 @@ To create a service connection
 
 ![Alt text](images/variable%20group%204.png)
 
+## Create Environments
+
+1. Go to Pipelines -\> Environments
+2. Select New environment
+3. Create three environments.
+- TDD
+- UAT
+- Prod
+4. In the UAT and Prod environments, add an approval check and select the users that need to approve the appropriate deploy stages.
+
 ## Create a Pipeline
 
 1. Go to Pipelines -\> Pipelines
@@ -358,8 +387,6 @@ Variable: Value
 2. OCTOPUS_SPACE:         The name of your Octopus Deploy space
 3. USERNAME:              The github username of the user that created the PAT
 4. OWNER:                 The owner of the repository. 
-5. TDD_RESOURCE_GROUP:    Equal to the Octopus Deploy variable **ResourceGroupName** TDD value. default: onion-architecture-dotnet-7-containers-tdd
-6. TDD_APP_NAME:          Equal to the Octopus Deploy variable **container_app_name** TDD value. default: tdd-ui
 
 ## Connect Octopus to the Github Packages feed:
 In Octopus Deploy:
@@ -372,11 +399,198 @@ In Octopus Deploy:
 - Set the Feed username to the github username of the user that created the PAT
 - Provide the personal access token from Github as the Feed Password
 
+## Create Environments
+In Github
+1. Go to Settings -\> Environments
+2. Select New environment
+3. Create three environments.
+- TDD
+- UAT
+- Prod
+4. In the UAT and Prod environments, check Required reviewers box and select the users that need to approve that stage
+
 ## Enable Github Actions Workflows
 In the forked Github repository, navigate to Actions. Select *I understand my workflows, go ahead and enable them*
 
 
 Push a commit to trigger Github Actions to run the pipeline.  
+
+
+# TeamCity
+
+## Create a New Project
+Create a New Project by selecting the **New project…** button in the top right
+
+![Alt text](images/TC1.png)
+
+Select the git repository that was created as the repository to create from
+
+![Alt text](images/TC2.png)
+
+Select **Import settings from .teamcity/settings.kts and enable synchronization with the VS repository**
+
+![Alt text](images/TC3.png)
+
+Select **Proceed**
+
+## Enable UI Updates
+
+Navigate to Project settings -> Versioned settings
+Check the box **Allow editing project settings via UI**
+
+![Alt text](images/TC4.png)
+
+Select Apply
+
+## Create an Azure Service Principal
+Using the az cli run:
+- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role Contributor --sdk-auth
+- replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as it will be needed later.
+
+## Update Project Parameters
+Navigate to Project Settings -> Parameters
+
+Edit the following Configuration Parameters
+- AzAppId – The clientId from the JSON output from the service principal creation
+- AzPassword (password spec) - The clientSecret from the JSON output from the service principal creation
+- AzTenant (password spec) – The tenantId from the JSON output from the service principal creation
+-	OctoApiKey (password spec) – API key from Octopus Deploy
+- OctoProject – Name of the Octopus Deploy project that was created
+- OctoSpace – ID of the Octopus Deploy Space that houses the project. This should be Spaces-##
+- OctoSpaceName – Name of the Octopus Deploy Space that houses the project. E.g. Default
+- OctoURL – URL of the Octopus Deploy Instance. E.g. https://clearmeasure.octopus.app
+
+![Alt text](images/TC5.png)
+
+
+## Connect TeamCity to ACR
+
+-	Select Edit Project -> Connections
+-	Edit the existing Onoin-Arch ACR connection
+-	Set the registry address to the login server of the ACR that was created
+-	Set the Username to the clientId from the JSON output from the service principal creation
+-	Set the Password to the clientSecret from the JSON output from the service principal creation
+
+![Alt text](images/TC6.png)
+
+## Create a TeamCity Nuget feed
+
+Navigate to Edit Project -> NuGet Feed
+- If this option is not available, contact TeamCity and request a NuGet feed be enabled
+Name the feed Onion_Architecture_Container_Apps
+In the Integration Build build configuration, edit the Publish Packages Build Step
+- Set the API key value to: **%teamcity.nuget.feed.api.key%**
+- Set the Package Source value to the nuget feed that was just created
+- The nuget feed can be found in the hamburger dropdown menu
+
+## Connect Octopus to the TeamCity feed:
+### In Octopus Deploy
+1.	Navigate to Library -> External Feeds and select ADD FEED
+2.	Set the Feed type to NuGet Feed
+3.	Name the feed Onion-Arch-DotNet-7
+4.	Copy the v3 URL from the TeamCity Nuget feed into the URL field
+5.	Provide the username from one of the TeamCity users as the Username. 
+6.	Provide the password from the TeamCity user as the Feed Password
+- Making a TeamCity user for Octopus to connect to TeamCity is recommended
+
+![Alt text](images/TC7.png)
+
+Push a commit to the git repo, and the pipeline will start
+
+
+# Octopus Deploy Runbook Setup:
+
+In the ChurchBulletin.Scripts package that is created there is a script called ScaleInfrastructure.ps1. When provided with appReplicas and/or serviceObjective values the script will set the min and max number of replicas of the container app and the service objective of the database. This is used with Octopus Runbooks ([Runbooks Documentation](https://octopus.com/docs/runbooks#:~:text=To%20create%20or%20manage%20your,%E2%9E%9C%20Runbooks%20%E2%9E%9C%20Add%20Runbook.)) to scale up and down the infrastructure for day and nighttime loads.
+
+## Create ContainerAppReplicas variable
+
+In your Octopus Deploy project, create two new variables
+- **ContainerAppReplicas** and give it an integer value. e.g. 2
+- **DBScaledUpPerformanceLevel** and give it service objective value. e.g. S0
+
+Commit these variables to main. **Variables not in the default branch will not be accessible to runbooks**
+
+![Alt text](images/Replicas1.png)
+
+## Create Scale Up Runbook
+
+- In your Octopus Deploy project, navigate to Operations -> Runbooks and select ADD RUNBOOK
+- Name the runbook Scale Up Infrastructure
+- Select Save
+![Alt text](images/runbook1.png)
+
+- Select DEFINE YOUR RUNBOOK PROCESS near the upper right
+
+![Alt text](images/runbook2.png)
+
+- And then select ADD STEP
+
+- Use the run az Azure Script step template
+
+![Alt text](images/runbook3.png)
+
+- Select ADD
+
+- Name the step **Scale Up Infrastructure**
+- Leave Execution Location, Worker Pool, Container Image, and Azure Tools as default
+
+- Under Azure -> Account select the chain links icon to bind the account value to a variable. Then set the value to **#{AzureAccount}** 
+
+![Alt text](images/runbook4.png)
+
+- Under Script Source select **Script file inside a package** 
+- Under Script File in Package set the Package feed to the feed that was created.
+- Set the Package ID to **ChurchBulletin.Script**
+- Set the Script file name to **ScaleInfrastructure.ps1**
+- Set the Script parameters to **-appReplicas #{ContainerAppReplicas} -serviceObjective #{DBScaledUpPerformanceLevel}**
+
+![Alt text](images/runbook5.png)
+
+Leave the rest of the settings at default, and select SAVE
+
+## Create Scale Down Runbook
+
+Create another runbook named Scale Down Container App using the same directions.
+
+- Change the Step Name to **Scale Down Infrastructure**
+- Leave the Script Parameters blank
+
+## Publish the runbooks
+
+Runbooks must be published before they can be consumed by triggers.
+
+- Navigate to the Scale Up Infrastructure runbook. Select PUBLISH
+![Alt text](images/runbook6.png)
+- Leave the default settings, and select PUBLISH
+![Alt text](images/runbook7.png)
+- Do the same for Scale Down Infrastructure
+
+## Create Scheduled Runbook Triggers
+([Runbook Triggers Documentation](https://octopus.com/docs/runbooks/scheduled-runbook-trigger))
+
+- Navigate to Operations -> Triggers
+- Select ADD SCHEDULED TRIGGER
+- Name the trigger Scale Up Morning
+- Under Runbook select Scale Up Infrastructure
+- Under Target Environments select Prod
+- Leave the schedule at Daily
+- Under Run Days uncheck Saturday and Sunday
+- Set Schedule Timezone to your timezone
+- Leave the Interval at once
+- Set the Start Time to 8:00 AM
+- Click Save
+
+![Alt text](images/trigger1.png)
+
+- Create another trigger named Scale Down Evening
+- Use the Scale Down Container App runbook
+- Under Target Environments select Prod
+- Under Run Days uncheck Saturday and Sunday
+- Set Schedule Timezone to your timezone
+- Set the Start Time to 6:00 PM
+- Click Save
+
+Now the container app and database will automatically be scaled up every morning, and scaled down every evening
 
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
