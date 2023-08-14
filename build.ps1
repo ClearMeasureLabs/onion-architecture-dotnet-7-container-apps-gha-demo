@@ -16,11 +16,9 @@ $verbosity = "minimal"
 
 $build_dir = "$base_dir\build"
 $test_dir = "$build_dir\test"
-
-
 $aliaSql = "$source_dir\Database\scripts\AliaSql.exe"
 $databaseAction = $env:DatabaseAction
-if ([string]::IsNullOrEmpty($databaseAction)) { $databaseAction = "Rebuild"}
+if ([string]::IsNullOrEmpty($databaseAction)) { $databaseAction = "migrate"}
 $databaseName = $projectName
 if ([string]::IsNullOrEmpty($databaseName)) { $databaseName = $projectName}
 $script:databaseServer = "(LocalDb)\MSSQLLocalDB"
@@ -112,7 +110,57 @@ Function AcceptanceTest{
 
 Function MigrateDatabaseLocal {
 	exec{
-		& $aliaSql $databaseAction $script:databaseServer $databaseName $databaseScripts
+		# & $aliaSql $databaseAction $script:databaseServer $databaseName $databaseScripts
+	
+		#start mssqllocaldb and create the database
+		sqllocaldb start mssqllocaldb
+		$connectionString = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True"
+		$databaseName = $projectName
+		$connection = New-Object System.Data.SqlClient.SqlConnection
+		$connection.ConnectionString = $connectionString
+		$connection.Open()
+		$command = New-Object System.Data.SqlClient.SqlCommand
+		$command.Connection = $connection
+		$command.CommandText = "CREATE DATABASE [$databaseName]"
+		$command.ExecuteNonQuery()
+		$connection.Close()
+
+		#flyway can't connect to mssqllocaldb using windows auth. Create a new user for flyway
+		# Set the connection string
+		$connectionString = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=$projectName;Integrated Security=True"
+
+		$connection = New-Object System.Data.SqlClient.SqlConnection
+		$connection.ConnectionString = $connectionString
+		$connection.Open()
+		
+		# Set the username and password for the new user
+		$username = "flyway"
+		$password = "qdnGVXxyjrEYWhSV3h"
+		$command = $connection.CreateCommand()
+		$command.CommandText = @"
+		CREATE LOGIN [$username] WITH PASSWORD = '$password';
+		CREATE USER [$username] FOR LOGIN [$username];
+		exec sp_addrolemember 'db_owner', '$username'
+"@
+		$command.ExecuteNonQuery()
+		
+		#get the instance for the localdb
+		$output = & 'SqlLocalDB.exe' 'info' 'MSSQLLocalDB'
+		# Find the line that contains the pipename
+		$pipenameLine = $output | Where-Object { $_ -match 'Instance Pipe name:' }
+		# Extract the pipename from the line
+		$pipename = $pipenameLine -replace 'Instance pipe name: np:\\\\.\\pipe\\', '' -replace '\\tsql\\query', ''
+		
+		& ./flyway/flyway.cmd baseline -url="jdbc:jtds:sqlserver://./$databaseName;instance=$pipename;namedPipe=true" -user="$username" -password="$password"
+		& ./flyway/flyway.cmd $databaseAction -url="jdbc:jtds:sqlserver://./$databaseName;instance=$pipename;namedPipe=true" -user="$username" -password="$password" -locations="filesystem:$databaseScripts"
+		
+		#remove the flyway user
+		$command.CommandText = @"
+		DROP LOGIN [$username];
+		DROP USER [$username]
+"@
+		$command.ExecuteNonQuery()
+		$connection.Close()
 	}
 }
 
@@ -161,7 +209,6 @@ Function Package{
 
 Function PrivateBuild{
 	$projectConfig = "Debug"
-	[Environment]::SetEnvironmentVariable("containerAppURL", "localhost:7174", "User")
 	$sw = [Diagnostics.Stopwatch]::StartNew()
 	Init
 	Compile
