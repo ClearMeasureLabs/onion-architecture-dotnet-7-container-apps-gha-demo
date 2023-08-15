@@ -112,20 +112,7 @@ Function AcceptanceTest{
 
 Function MigrateDatabaseLocal {
 	exec{
-		#start mssqllocaldb and create the database
-		sqllocaldb start mssqllocaldb
-		$connectionString = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True"
-		$databaseName = $projectName
-		$connection = New-Object System.Data.SqlClient.SqlConnection
-		$connection.ConnectionString = $connectionString
-		$connection.Open()
-		$command = New-Object System.Data.SqlClient.SqlCommand
-		$command.Connection = $connection
-		$command.CommandText = "CREATE DATABASE [$databaseName]"
-		$command.ExecuteNonQuery()
-		$connection.Close()
-		# run the migration scripts
-		& dotnet ef database update --project ./src/Database/Database.csproj
+		& $aliaSql $databaseAction $script:databaseServer $databaseName $databaseScripts
 	}
 }
 
