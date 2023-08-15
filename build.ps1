@@ -124,9 +124,6 @@ Function MigrateDatabaseLocal {
 		$command.CommandText = "CREATE DATABASE [$databaseName]"
 		$command.ExecuteNonQuery()
 		$connection.Close()
-
-		#install entity framework cli
-		dotnet tool install --global dotnet-ef
 		# run the migration scripts
 		& dotnet ef database update --project ./src/Database/Database.csproj
 	}
