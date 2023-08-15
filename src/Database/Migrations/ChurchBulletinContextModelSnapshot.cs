@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProgrammingWithPalermo.ChurchBulletin.Database.Models;
+using ProgrammingWithPalermo.ChurchBulletin.Database;
 
 #nullable disable
 

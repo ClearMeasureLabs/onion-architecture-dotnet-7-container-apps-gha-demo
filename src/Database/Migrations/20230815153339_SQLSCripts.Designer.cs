@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProgrammingWithPalermo.ChurchBulletin.Database.Models;
+using ProgrammingWithPalermo.ChurchBulletin.Database;
 
 #nullable disable
 
 namespace ProgrammingWithPalermo.ChurchBulletin.Database.Migrations
 {
     [DbContext(typeof(ChurchBulletinContext))]
-    [Migration("20230814175515_SQLSCripts")]
+    [Migration("20230815153339_SQLSCripts")]
     partial class SQLSCripts
     {
         /// <inheritdoc />

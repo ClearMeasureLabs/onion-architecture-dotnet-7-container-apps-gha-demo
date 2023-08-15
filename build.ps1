@@ -112,13 +112,21 @@ Function AcceptanceTest{
 
 Function MigrateDatabaseLocal {
 	exec{
-		#start mssqllocaldb and create the database
+		#start mssqllocaldb and check if db exists. If so, drop it first. Then create the database
 		sqllocaldb start mssqllocaldb
-		$connectionString = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True"
-		$databaseName = $projectName
+		$connectionString = "Data Source=$databaseServer;Initial Catalog=master;Integrated Security=True"
 		$connection = New-Object System.Data.SqlClient.SqlConnection
 		$connection.ConnectionString = $connectionString
 		$connection.Open()
+		$query = "SELECT database_id FROM sys.databases WHERE Name = '$databaseName'"
+		$command = New-Object System.Data.SqlClient.SqlCommand($query, $connection)
+		$result = $command.ExecuteScalar()
+		if ($result -ne $null) {
+			# The database exists, so drop it
+			$query = "DROP DATABASE [$databaseName]"
+			$command = New-Object System.Data.SqlClient.SqlCommand($query, $connection)
+			$command.ExecuteNonQuery()
+		}		
 		$command = New-Object System.Data.SqlClient.SqlCommand
 		$command.Connection = $connection
 		$command.CommandText = "CREATE DATABASE [$databaseName]"
@@ -127,6 +135,8 @@ Function MigrateDatabaseLocal {
 
 		#install entity framework cli
 		dotnet tool install --global dotnet-ef
+		#generate the context model
+		dotnet ef dbcontext scaffold "Server=$databaseServer;Database=$databaseName;Trusted_Connection=True" Microsoft.EntityFrameworkCore.SqlServer -f
 		# run the migration scripts
 		& dotnet ef database update --project ./src/Database/Database.csproj
 	}
