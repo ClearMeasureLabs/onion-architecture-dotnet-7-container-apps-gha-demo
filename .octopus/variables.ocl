@@ -145,14 +145,6 @@ variable "ResourceGroupName" {
     }
 }
 
-variable "libraryset" {
-    value "Onion DevOps" {}
-}
-
-variable "octoURL" {
-    value "https://clearmeasure.octopus.app/" {}
-}
-
 variable "DatabaseServerName" {
     value "#{az_login_appid}-sqlserver-prod" {
         environment = ["prod"]
@@ -167,6 +159,66 @@ variable "DatabaseServerName" {
     }
 }
 
+variable "ContainerAppScaledUpReplicas" {
+    value "2" {}
+}
+
+variable "ContainerAppScaledUpCPU" {
+    value "0.5" {}
+}
+
+variable "ContainerAppScaledUpMem" {
+    value "1.0" {}
+}
+
+variable "DBScaledUpPerformanceLevel" {
+    value "S0" {}
+}
+
+variable "EmailAlertActionName" {
+    value "Email Alert" {}
+}
+
+variable "AvailabilityTestName" {
+    value "#{container_app_name}-availability-test" {}
+}
+
+variable "AppInsightsName" {
+    value "#{ResourceGroupName}-Insights" {}
+}
+
+variable "LowAvailabilityAlertName" {
+    value "#{ResourceGroupName} Low Availability" {}
+}
+
+variable "LogAnalyticsWorkspaceName" {
+    value "#{Octopus.Environment.Name}-Log-Analytics" {}
+}
+
+variable "AutomationAccount" {
+    value "#{Octopus.Environment.Name}-#{Octopus.Release.Id | ToLower }-automation" {}
+}
+
+variable "webhookName" {
+    value "#{ResourceGroupName}-webhook" {}
+}
+
+variable "RunbookName" {
+    value "OctoRunbook" {}
+}
+
+variable "ActionName" {
+    value "runRunbook" {}
+}
+
+variable "OctoRunbookName" {
+    value "Unhealthy app alert" {}
+}
+
+variable "azrunbookname" {
+    value "octo-runbook" {}
+}
+
 variable "EnsureEnvironmentsExist" {
     value "False" {
         environment = ["uat"]
@@ -177,10 +229,6 @@ variable "EnsureEnvironmentsExist" {
     }
 }
 
-variable "DBScaledUpPerformanceLevel" {
-    value "S0" {}
-}
-
-variable "ContainerAppReplicas" {
-    value "0" {}
+variable "OctoInstanceURL" {
+    value "https://clearmeasure.octopus.app/" {}
 }
