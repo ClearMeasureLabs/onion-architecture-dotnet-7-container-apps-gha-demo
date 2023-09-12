@@ -176,7 +176,7 @@ jobs:
         deploy_to: "UAT"   
         progress: true 
         release_number: ${{env.BUILD_BUILDNUMBER}}
-        timeout: 00:30:00
+        deployment_timeout: 00:30:00
 
 
   Prod:
@@ -202,4 +202,4 @@ jobs:
         deploy_to: "Prod"   
         progress: true 
         release_number: ${{env.BUILD_BUILDNUMBER}}
-        timeout: 00:30:00
+        deployment_timeout: 00:30:00
